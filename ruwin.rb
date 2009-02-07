@@ -2,6 +2,7 @@ require 'osx/cocoa'
 require 'pp'
 OSX.require_framework 'ScriptingBridge'
 
+
 module Dimension
   def val(v)
     case v
@@ -42,7 +43,8 @@ class Ruwin
   end
   
   def self.frontmost(options={},&block)
-    frontmost = system_events.applicationProcesses.find {|p| p.frontmost == 1}
+    process = system_events.applicationProcesses.find {|p| p.frontmost == 1}
+    options[:process] = process
     options[:target] = process.windows[0]
 
     new(options, &block)
@@ -51,6 +53,7 @@ class Ruwin
   def self.app(name,options={},&block)
     name = name.downcase
     app = system_events.applicationProcesses.find {|a| a.name.downcase == name}
+    options[:process] = app
     options[:target] = app.windows[0]
 
     new(options, &block)
@@ -62,13 +65,11 @@ class Ruwin
   SIZE_CODE = 'ptsz'.unpack('N').first
   POSITION_CODE = 'posn'.unpack('N').first
 
-  # FOCUS_CODE = 'selE'.unpack('N').first
-  # focu
-
   ACTIONS_CODE = 'actT'.unpack('N').first
 
   def initialize(options, &block)
-    @target = options[:target]
+    @process = options.delete(:process)
+    @target = options.delete(:target)
 
     @origin = [nil,nil]
     @size   = [nil,nil]
@@ -90,14 +91,24 @@ class Ruwin
     
     origin.setTo(absolute_origin(origin.get))
     size.setTo(absolute_size(size.get))
-
-    #@target.propertyWithCode(FOCUS_CODE).setTo(true)
   end
 
   def bring_to_front!
-    if raise_action = @target.elementArrayWithCode(ACTIONS_CODE).objectWithName('AXRaise')
-      raise_action.perform
-    end
+
+    # none of these work
+    #pid = @process.unixId
+    #app = OSX::NSWorkspace.sharedWorkspace.launchedApplications.find {|a| a['NSApplicationProcessIdentifier'] == pid}
+
+    #psn = app.values_at('NSApplicationProcessSerialNumberHigh','NSApplicationProcessSerialNumberLow').pack('L2')
+    #OSX::SetFrontProcessWithOptions(psn,0)
+    
+    #if @process
+    #  OSX::SBApplication.applicationWithProcessIdentifier(@process.unixId).activate
+    #end
+
+    #if raise_action = @target.elementArrayWithCode(ACTIONS_CODE).objectWithName('AXRaise')
+    #  raise_action.perform
+    #end
   end
   
 
@@ -150,6 +161,7 @@ end
 
 if $0 == __FILE__
   Ruwin.app('safari', :origin => [0,0], :size => [0.666,1.0])
+
   Ruwin.app('terminal') do |w|
     w.origin = [0.666,0]
     w.size   = [0.333,0.5]

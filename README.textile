@@ -15,7 +15,7 @@ h2. examples
 
 Include ruwin:
 
-  #!/usr/bin/env ruby
+  !/usr/bin/env ruby
   require File.dirname(__FILE__)+'/ruwin'
 
 h3. dev time
