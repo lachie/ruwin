@@ -1,0 +1,111 @@
+h1. ruwin
+
+Resize your windows in OS X from handy little ruby scripts.
+
+h2. motivation
+
+I was taken by the idea of http://github.com/topfunky/osx-window-sizing (and http://github.com/wycats/osx-window-sizing), 
+but just thinking of applescript made me ill.
+
+So I realised the idea in Ruby using RubyCocoa & ScriptingBridge. This isn't a golden hammer thing. Its a despising applescript thing.
+
+Please, fork, extend and feed back!
+
+h2. examples
+
+Include ruwin:
+
+  #!/usr/bin/env ruby
+  require File.dirname(__FILE__)+'/ruwin'
+
+h3. dev time
+
+Let's make macvim take up 60% of the horizonal space and all of the vertical.
+Terminal will take up 40% of the horizontal space, but only 1/2 of the vertical.
+
+  Ruwin.app('macvim'  , :size => [0.6,1.0], :origin => [0,0])
+  Ruwin.app('terminal', :size => [0.4,0.5], :origin => [0.6,0])
+
+(You could also say this as, if its your bag:
+
+  Ruwin.app('macvim') do |w|
+    w.size   = [0.6,1.0]
+    w.origin = [0,0]
+  end
+  Ruwin.app('terminal') do |w|
+    w.size   = [0.4,0.5]
+    w.origin = [0.6,0]
+  end
+
+)
+
+
+h3. take it to the top
+
+Let's make the front window take up all the vertical space but stay in the same horizontal spot with the same horizontal size:
+
+  Ruwin.frontmost(:size => [nil,1.0], :origin => [nil,0])
+
+So specifying nil means "leave that thing alone".
+
+h3. absolution
+
+In the previous examples we're talking in terms relative to the size of the main screen. You can also specify exact numbers if you like.
+
+  Ruwin.frontmost(:size => [10,20], :origin => [500,500])
+
+Whatever, you might find a use for that, especially if you always know the size of your screens.
+
+h2. integrating
+
+I like to integrate this using Quicksilver. To do this I have a custom Quicksilver catalogue pointing at @~/bin@:
+
+!http://img.skitch.com/20090207-q96j3egk1xjr9pgwtm7nrdsifc.jpg!
+
+My ruwin clone lives in @~/dev/ruby/ruwin@. From here I symlink the resizing scripts into @~/bin@. Don't forget to make them executable:
+
+  cd ~/bin
+  ln -s ~/dev/ruby/ruwin/windev
+  chmod 755 windev
+
+(I'm pretty sure that the symlinked approach only works via QS in this case because it follows the symlink before executing, and thus your script can find ruwin.rb. YMMV.)
+
+Now's the time to rescan your catalogue. Hit your QS key combo and type @windev@
+
+!http://img.skitch.com/20090207-xtfm2p2e7mf9eaixu28j2uqmgm.jpg!
+
+Hit enter and your windows will suddenly do your will.
+
+For extra points you can even use QS to add a global Hotkey-trigger to the script.
+
+h2. TODO
+
+* make the resized windows pop to the front as they resize. I'm trying an approach, but it doesn't seem to work from QS.
+* work out how to address different screens
+* work out how to address different windows of apps
+* perhaps add a tiling dsl
+
+h2. license
+
+The MIT License
+
+Copyright (c) 2009 Lachie Cox
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
