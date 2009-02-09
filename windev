@@ -2,6 +2,6 @@
 require File.dirname(__FILE__)+'/ruwin'
 
 Ruwin.app('macvim'  , :size => [0.6,1.0], :origin => [0,0])
-Ruwin.app('terminal', :size => [0.4,0.5], :origin => [0.6,0])
+Ruwin.app('terminal', :size => [0.4,1.0], :origin => [0.6,0])
 
 # vim: set ft=ruby
