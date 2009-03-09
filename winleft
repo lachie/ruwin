@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__)+'/ruwin'
+
+Ruwin.frontmost(:size => [0.6,1.0], :origin => [0,0])
+
+# vim: set ft=ruby
+
