@@ -1,14 +1,15 @@
-require 'osx/cocoa'
 require 'pp'
-OSX.require_framework 'ScriptingBridge'
+#require 'osx/cocoa'
+#OSX.require_framework 'ScriptingBridge'
 
+framework 'ScriptingBridge'
 
 module Dimension
   def val(v)
     case v
     when nil
       nil
-    when OSX::NSNumber
+    when NSNumber
       v.to_i
     else
       v
@@ -39,11 +40,11 @@ end
 
 class Ruwin
   def self.system_events
-    @system_events ||= OSX::SBApplication.applicationWithBundleIdentifier "com.apple.SystemEvents"
+    @system_events ||= SBApplication.applicationWithBundleIdentifier "com.apple.SystemEvents"
   end
   
   def self.frontmost(options={},&block)
-    process = system_events.applicationProcesses.find {|p| p.frontmost == 1}
+    process = system_events.applicationProcesses.find {|p| p.frontmost == true}
     options[:process] = process
     options[:target] = process.windows[0]
 
@@ -117,8 +118,8 @@ class Ruwin
   MENU_BAR_HEIGHT = 22
   def screen
     unless @screen 
-      @screen = OSX::NSScreen.mainScreen.frame
-      @screen.height -= MENU_BAR_HEIGHT
+      @screen = NSScreen.mainScreen.frame
+      @screen.size.height -= MENU_BAR_HEIGHT
     end
 
     @screen
@@ -139,8 +140,8 @@ class Ruwin
     abs_size      = Size.new(@size)
     original_size = Size.new(original_size)
 
-    abs_size.width  = abs(abs_size.width , screen.width , original_size.width)
-    abs_size.height = abs(abs_size.height, screen.height, original_size.height)
+    abs_size.width  = abs(abs_size.width , screen.size.width , original_size.width)
+    abs_size.height = abs(abs_size.height, screen.size.height, original_size.height)
 
     [ abs_size.width, abs_size.height ]
   end
@@ -149,8 +150,8 @@ class Ruwin
     abs_origin      = Point.new(@origin)
     original_origin = Point.new(original_origin)
 
-    abs_origin.x = abs(abs_origin.x, screen.width , original_origin.x)
-    abs_origin.y = abs(abs_origin.y, screen.height, original_origin.y)
+    abs_origin.x = abs(abs_origin.x, screen.size.width , original_origin.x)
+    abs_origin.y = abs(abs_origin.y, screen.size.height, original_origin.y)
 
     abs_origin.y += MENU_BAR_HEIGHT
 
