@@ -2,6 +2,24 @@ require 'osx/cocoa'
 require 'pp'
 OSX.require_framework 'ScriptingBridge'
 
+class Object
+  def tap
+    yield self
+    self
+  end
+
+  def tapp
+    pp self
+    self
+  end
+end
+
+module Enumerable
+  def eachtap
+    each {|t| yield t}
+    self
+  end
+end
 
 module Dimension
   def val(v)
@@ -43,7 +61,7 @@ class Ruwin
   end
   
   def self.frontmost(options={},&block)
-    process = system_events.applicationProcesses.find {|p| p.frontmost == 1}
+    process = system_events.applicationProcesses.find {|p| p.frontmost}
     options[:process] = process
     options[:target] = process.windows[0]
 
