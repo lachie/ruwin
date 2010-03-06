@@ -1,10 +1,7 @@
 require 'pp'
-#require 'osx/cocoa'
-#OSX.require_framework 'ScriptingBridge'
+require 'osx/cocoa'
+OSX.require_framework 'ScriptingBridge'
 
-<<<<<<< HEAD
-framework 'ScriptingBridge'
-=======
 class Object
   def tap
     yield self
@@ -23,14 +20,13 @@ module Enumerable
     self
   end
 end
->>>>>>> snowy
 
 module Dimension
   def val(v)
     case v
     when nil
       nil
-    when NSNumber
+    when OSX::NSNumber
       v.to_i
     else
       v
@@ -61,7 +57,7 @@ end
 
 class Ruwin
   def self.system_events
-    @system_events ||= SBApplication.applicationWithBundleIdentifier "com.apple.SystemEvents"
+    @system_events ||= OSX::SBApplication.applicationWithBundleIdentifier("com.apple.SystemEvents")
   end
   
   def self.frontmost(options={},&block)
@@ -139,7 +135,7 @@ class Ruwin
   MENU_BAR_HEIGHT = 22
   def screen
     unless @screen 
-      @screen = NSScreen.mainScreen.frame
+      @screen = OSX::NSScreen.mainScreen.frame
       @screen.size.height -= MENU_BAR_HEIGHT
     end
 
